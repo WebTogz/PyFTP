@@ -92,6 +92,8 @@ if __name__ == '__main__' :
             "\tH/HELP -> Aide\n" + \
             "\tS/STATE -> Imprime sur la sortie standard l'état du dossier dans lequel on se trouve\n" + \
             "\tCD [dossier] -> Permet de se positionner dans le dossier donné en paramètre\n" + \
+            "\tR/RENAME [fichier_à_renommer] [nouveau_nom] -> Permet de modifier le nom d'un fichier/répertoire (1er paramètre) en un autre (2ème paramètre)\n" + \
+            "\tRM [fichier] -> Permet de supprimer un fichier/dossier donné en paramètre" + \
             "\tDL/DOWNLOAD [fichier] -> Télécharge (récursivement) le fichier lié - ./ par défaut\n"
             )
         if (cmd == "S") or (cmd == "STATE"):
@@ -104,5 +106,20 @@ if __name__ == '__main__' :
                 print("ERREUR - pas de dossier donné en paramètre...")
             else:
                 ftp.cwd(ligne[1])
+        if (cmd == "R") or (cmd == "RENAME"):
+            if (len(ligne) <= 2):
+                print("ERREUR - vous n'avez pas entré les paramètres demandés...")
+            else:
+                ftp.rename(ligne[1], ligne[2])
+        if (cmd == "RM"):
+            if (len(ligne) == 1):
+                print("ERREUR - pas de fichier/dossier donné en paramètre")
+            else:
+                try:
+                    ftp.delete(ligne[1])
+                except error_perm as e_perm:
+                    print("ERREUR - Vous n'avez pas la permission de supprimer le fichier/dossier donné en paramètre")
+                except error_reply as e_reply:
+                    print("ERREUR lors de la suppression du fichier/dossier: ", e_reply)
 
     quitter_session()
