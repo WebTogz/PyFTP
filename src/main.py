@@ -6,12 +6,46 @@ def maj_prompt():
     prompt = 'login@serveur-chemin_fichier: '
     """
 
+    global ftp
     global prompt
     global login
     global serveur
     global chemin_en_cours
 
     prompt = login+'@'+serveur+'-'+chemin_en_cours+': '
+
+def connexion_serveur(serveur, port):
+    """
+    Fonction permettant la connexion avec un serveur FTP, via l'adresse
+    du serveur et le port FTP (21 par défaut)
+    """
+
+    global ftp
+
+    ftp = FTP(serveur)
+    ftp.connect(serveur, port)
+    print(ftp.getwelcome())
+
+def authentification(login, mdp):
+    """
+    Fonction permettant d'authentifier l'utilisateur via la combinaison
+    login/mdp
+    """
+
+    global ftp
+
+    ftp.login(login, mdp)
+
+def quitter_session():
+    """
+    Fonction permettant de quitter une session FTP
+    """
+
+    global ftp
+
+    print("Fermeture de la session...", end='')
+    ftp.quit()
+    print("OK")
 
 if __name__ == '__main__' :
 
