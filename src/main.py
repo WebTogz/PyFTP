@@ -81,4 +81,27 @@ if __name__ == '__main__' :
 
     while 1:
         maj_prompt()
-        cmd = input(prompt)
+        ligne = input(prompt).split(' ')
+        cmd = ligne[0]
+        if (cmd == "Q") or (cmd == "QUIT"):
+            break
+        if (cmd == "H") or (cmd == "HELP"):
+            print(
+            "\tQ/QUIT -> Quitter\n" + \
+            "\tH/HELP -> Aide\n" + \
+            "\tS/STATE -> Imprime sur la sortie standard l'état du dossier dans lequel on se trouve\n" + \
+            "\tCD [dossier] -> Permet de se positionner dans le dossier donné en paramètre\n" + \
+            "\tDL/DOWNLOAD [fichier] -> Télécharge (récursivement) le fichier lié - ./ par défaut\n"
+            )
+        if (cmd == "S") or (cmd == "STATE"):
+            entrees = []
+            ftp.dir(entrees.append)
+            for item in entrees:
+                print(item)
+        if (cmd == "CD"):
+            if (len(ligne) == 1):
+                print("ERREUR - pas de dossier donné en paramètre...")
+            else:
+                ftp.cwd(ligne[1])
+
+    quitter_session()
