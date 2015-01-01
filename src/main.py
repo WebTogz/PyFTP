@@ -59,6 +59,7 @@ if __name__ == '__main__' :
     global mdp
     global prompt
     global chemin_en_cours
+    global ftp
 
     print("Bienvenue sur PyFTP")
 
@@ -71,8 +72,6 @@ if __name__ == '__main__' :
     port = 21
 
     chemin_en_cours = "~/"
-
-    maj_prompt();
 
     connexion_serveur(serveur, port)
 
