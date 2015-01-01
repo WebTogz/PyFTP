@@ -77,6 +77,8 @@ if __name__ == '__main__' :
 
     authentification(login, mdp)
 
+    print("\nVous êtes maintenant authentifié -- tapez [H]ELP pour afficher l'aide, [Q]UIT pour quitter\n")
+
     while 1:
         maj_prompt()
         cmd = input(prompt)
