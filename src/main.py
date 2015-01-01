@@ -16,7 +16,7 @@ def maj_prompt():
     global chemin_en_cours
 
     #On recherche l'actuel chemin
-    chemin_en_cours = ftp.pwd()
+    chemin_en_cours = "~/"+ftp.pwd()
 
     prompt = login+'@'+serveur+'-'+chemin_en_cours+': '
 
@@ -71,8 +71,6 @@ if __name__ == '__main__' :
     serveur = input("Veuillez entrer l'adresse du serveur FTP: ")
 
     port = 21
-
-    chemin_en_cours = "~/"
 
     connexion_serveur(serveur, port)
 
