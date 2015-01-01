@@ -1,6 +1,7 @@
 #/usr/local/bin/python3
 #--*--coding:utf8--*--
 from ftplib import FTP
+import getpass
 
 def maj_prompt():
     """
@@ -65,7 +66,7 @@ if __name__ == '__main__' :
 
     login = input("Veuillez entrer votre login: ")
 
-    mdp = input("Veuillez entrer votre mot-de-passe: ")
+    mdp = getpass.getpass(prompt = "Veuillez entrer votre mot-de-passe: ")
 
     serveur = input("Veuillez entrer l'adresse du serveur FTP: ")
 
