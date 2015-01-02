@@ -2,67 +2,66 @@
 #--*--coding:utf8--*--
 from ftplib import FTP
 import getpass
+from prompt import prompt
+from hist_session import hist_session
+from session import session
 
-def maj_prompt():
+def connexion():
     """
-    Fonction permettant de mettre-à-jour automatiquement le prompt
-    prompt = 'login@serveur-chemin_fichier: '
-    """
-
-    global ftp
-    global prompt
-    global login
-    global serveur
-    global chemin_en_cours
-
-    #On recherche l'actuel chemin
-    chemin_en_cours = "~/"+ftp.pwd()
-
-    prompt = login+'@'+serveur+'-'+chemin_en_cours+': '
-
-def connexion_serveur(serveur, port):
-    """
-    Fonction permettant la connexion avec un serveur FTP, via l'adresse
-    du serveur et le port FTP (21 par défaut)
+    Fonction permettant de se connecter sur le serveur FTP
     """
 
     global ftp
+    global session
 
-    ftp = FTP(serveur)
-    ftp.connect(serveur, port)
-    print(ftp.getwelcome())
+    ftp = FTP(session.serveur)
+    ftp.connect(session.serveur, session.port)
+    print(str(ftp.getwelcome(), 'UTF-8'))
 
-def authentification(login, mdp):
+def authentification():
     """
-    Fonction permettant d'authentifier l'utilisateur via la combinaison
-    login/mdp
-    """
-
-    global ftp
-
-    ftp.login(login, mdp)
-
-def quitter_session():
-    """
-    Fonction permettant de quitter une session FTP
+    Fonction permettant de se logger sur le serveur FTP
     """
 
     global ftp
+    global session
 
-    print("Fermeture de la session...", end='')
+    ftp.login(session.login, session.mdp)
+
+def demande_reconnexion():
+    """
+    Fonction permettant de se reconnecter sur une session déjà utilisée
+    """
+
+    global session
+
+    print("Demande de reconnexion sur "+session.serveur)
+    connexion()
+    authentification()
+    print("Reconnexion effectuée...")
+
+def quitter():
+    """
+    Fonction permettant de se déconnecter sur le serveur FTP
+    """
+
+    global ftp
+    global session
+
     ftp.quit()
-    print("OK")
+    print("Déconnexion sur "+session.serveur+" effectuée...")
+
 
 if __name__ == '__main__' :
 
-    global serveur
-    global login
-    global mdp
-    global prompt
-    global chemin_en_cours
     global ftp
+    global session
+
+    hist_rep = []
 
     print("Bienvenue sur PyFTP")
+
+    hist_session = hist_session()
 
     login = input("Veuillez entrer votre login: ")
 
@@ -72,15 +71,21 @@ if __name__ == '__main__' :
 
     port = 21
 
-    connexion_serveur(serveur, port)
+    session = session(login, mdp, serveur, port)
 
-    authentification(login, mdp)
+    connexion()
+
+    authentification()
 
     print("\nVous êtes maintenant authentifié -- tapez [H]ELP pour afficher l'aide, [Q]UIT pour quitter\n")
 
+    prompt = prompt(session.login, session.serveur)
+
+    hist_session.ajout_session(session)
+
     while 1:
-        maj_prompt()
-        ligne = input(prompt).split(' ')
+        prompt.change_rep(ftp.pwd())
+        ligne = input(prompt.ret_prompt()).split(' ')
         cmd = ligne[0]
         if (cmd == "Q") or (cmd == "QUIT"):
             break
@@ -89,21 +94,27 @@ if __name__ == '__main__' :
             "\tQ/QUIT -> Quitter\n" + \
             "\tH/HELP -> Aide\n" + \
             "\tS/STATE -> Imprime sur la sortie standard l'état du dossier dans lequel on se trouve\n" + \
-            "\tCD [dossier] -> Permet de se positionner dans le dossier donné en paramètre\n" + \
+            "\tM/MOVE [dossier] -> Permet de se positionner dans le dossier donné en paramètre\n" + \
+            "\tCD/CREATE DIRECTORY [dossier] -> Permet de créer un dossier dans ./\n" + \
             "\tR/RENAME [fichier_à_renommer] [nouveau_nom] -> Permet de modifier le nom d'un fichier/répertoire (1er paramètre) en un autre (2ème paramètre)\n" + \
-            "\tRM [fichier] -> Permet de supprimer un fichier/dossier donné en paramètre" + \
-            "\tDL/DOWNLOAD [fichier] -> Télécharge (récursivement) le fichier lié - ./ par défaut\n"
+            "\tRM [fichier] -> Permet de supprimer un fichier/dossier donné en paramètre\n" + \
+            "\tDL/DOWNLOAD [fichier] -> Télécharge (récursivement) le fichier lié - ./ par défaut\n" + \
+            "\tDS/DISPLAY SESSIONS -> Affiche sur la sortie standard la liste des sessions enregistrées\n" + \
+            "\tCS/CONNECT SESSION -> Nouvelle connexion sur une session pré-enregistrée\n"
             )
         if (cmd == "S") or (cmd == "STATE"):
             entrees = []
             ftp.dir(entrees.append)
             for item in entrees:
                 print(item)
-        if (cmd == "CD"):
+        if (cmd == "M") or (cmd == "MOVE"):
             if (len(ligne) == 1):
                 print("ERREUR - pas de dossier donné en paramètre...")
             else:
                 ftp.cwd(ligne[1])
+                hist_rep.append(ligne[1])
+        if (cmd == "CD") or (cmd == "CREATE DIRECTORY"):
+            print("Pas encore implémenté...")
         if (cmd == "R") or (cmd == "RENAME"):
             if (len(ligne) <= 2):
                 print("ERREUR - vous n'avez pas entré les paramètres demandés...")
@@ -119,5 +130,16 @@ if __name__ == '__main__' :
                     print("ERREUR - Vous n'avez pas la permission de supprimer le fichier/dossier donné en paramètre")
                 except error_reply as e_reply:
                     print("ERREUR lors de la suppression du fichier/dossier: ", e_reply)
+        if (cmd == "DL") or (cmd == "DOWNLOAD"):
+            print("Pas encore implémenté...")
+        if (cmd == "DS") or (cmd == "DISPLAY SESSIONS"):
+            hist_session.lister_historique()
+        if (cmd == "CS") or (cmd == "CONNECT SESSION"):
+            hist_session.lister_historique()
+            ind = int(input("Choisissez une session: "))
+            if (ind >= 0) and (ind < hist_session.taille()):
+                quitter()
+                session = hist_session.ret_session(ind)
+                demande_reconnexion()
 
-    quitter_session()
+    quitter()
