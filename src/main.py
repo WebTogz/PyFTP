@@ -61,6 +61,8 @@ if __name__ == '__main__' :
 
     hist_session = hist_session()
 
+    port = 21
+
     print("Bienvenue sur PyFTP")
 
     while 1:
@@ -71,7 +73,8 @@ if __name__ == '__main__' :
 
         serveur = input("Veuillez entrer l'adresse du serveur FTP: ")
 
-        port = 21
+        if (input("Utilisez-vous le port "+str(port)+"? <O>UI/<N>ON") == "N"):
+            port = int(input("Port = "))
 
         sess = session(login, mdp, serveur, port)
 
