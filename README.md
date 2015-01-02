@@ -9,9 +9,9 @@ TODO
 ----
 
 - [ ]  Téléchargement récursif
-- [ ]  Suppression de répertoires
+- [x]  Suppression de répertoires
 - [ ]  FTP-TLS
-- [ ]  Permettre le changement du port par défaut
+- [x]  Permettre le changement du port par défaut
 
 Contact
 -------
