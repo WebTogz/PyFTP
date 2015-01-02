@@ -6,7 +6,7 @@ class prompt(object):
     il se trouve
     """
 
-    def __init__(self, login, serveur, chemin = "~/"):
+    def __init__(self, login, serveur, chemin = "~"):
         """
         Constructeur du prompt
         login : login de l'utilisateur
@@ -35,4 +35,4 @@ class prompt(object):
         Méthode permettant de modifier l'attribut rep - en meme temps que l'utilisateur,\
         lors du changement de répertoire
         """
-        self.rep = rep
+        self.rep = "~"+rep
