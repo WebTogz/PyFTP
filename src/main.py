@@ -63,30 +63,32 @@ if __name__ == '__main__' :
 
     port = 21
 
+    choix = "N"
+
     print("Bienvenue sur PyFTP")
 
     while 1:
 
-        login = input("Veuillez entrer votre login: ")
+        if (choix == "N"):
 
-        mdp = getpass.getpass(prompt = "Veuillez entrer votre mot-de-passe: ")
+            login = input("Veuillez entrer votre login: ")
 
-        serveur = input("Veuillez entrer l'adresse du serveur FTP: ")
+            mdp = getpass.getpass(prompt = "Veuillez entrer votre mot-de-passe: ")
 
-        if (input("Utilisez-vous le port "+str(port)+"? <O>UI/<N>ON") == "N"):
-            port = int(input("Port = "))
+            serveur = input("Veuillez entrer l'adresse du serveur FTP: ")
 
-        sess = session(login, mdp, serveur, port)
+            if (input("Utilisez-vous le port "+str(port)+"? <O>UI/<N>ON") == "N"):
+                port = int(input("Port = "))
 
-        connexion()
+            sess = session(login, mdp, serveur, port)
 
-        authentification()
+            connexion()
 
-        print("\nVous êtes maintenant authentifié -- tapez [H]ELP pour afficher l'aide, [Q]UIT pour quitter\n")
+            authentification()
 
-        prm = prompt(sess.login, sess.serveur)
+            print("\nVous êtes maintenant authentifié -- tapez [H]ELP pour afficher l'aide, [Q]UIT pour quitter\n")
 
-        hist_session.ajout_session(sess)
+            prm = prompt(sess.login, sess.serveur)
 
         while 1:
             prm.change_rep(ftp.pwd())
@@ -105,9 +107,7 @@ if __name__ == '__main__' :
                 "\tR/RENAME [fichier_à_renommer] [nouveau_nom] -> Permet de modifier le nom d'un fichier/répertoire (1er paramètre) en un autre (2ème paramètre)\n" + \
                 "\tRM [fichier] -> Permet de supprimer un fichier/dossier donné en paramètre\n" + \
                 "\tDL/DOWNLOAD [fichier] -> Télécharge le fichier NON BINAIRE lié - ./ par défaut dans le cas récursif\n" + \
-                "\tDLB/DOWNLOAD BINARY [binaire] -> Télécharge le BINAIRE lié\n" + \
-                "\tDS/DISPLAY SESSIONS -> Affiche sur la sortie standard la liste des sessions enregistrées\n" + \
-                "\tCS/CONNECT SESSION -> Nouvelle connexion sur une session pré-enregistrée\n"
+                "\tDLB/DOWNLOAD BINARY [binaire] -> Télécharge le BINAIRE lié\n"
                 )
             if (cmd == "S") or (cmd == "STATE"):
                 entrees = []
@@ -163,23 +163,31 @@ if __name__ == '__main__' :
                         ftp.retrbinary('RETR %s' %ligne[1], fichier.write)
                     except:
                         print("Téléchargement du binaire impossible...")
-            if (cmd == "DS") or (cmd == "DISPLAY SESSIONS"):
-                hist_session.lister_historique()
-            if (cmd == "CS") or (cmd == "CONNECT SESSION"):
-                hist_session.lister_historique()
-                ind = int(input("Choisissez une session: "))
-                if (ind >= 0) and (ind < hist_session.taille()):
-                    quitter()
-                    sess = hist_session.ret_session(ind)
-                    demande_reconnexion()
 
         quitter()
 
-        if (input("Voulez-vous créer une nouvelle session? <O>UI / <N>ON") == "N"):
-            break
-        else:
+        if choix == "N":
+            hist_session.ajout_session(sess)
+
+        choix = input("Voulez-vous créer une nouvelle session? <N>OUVELLE / <E>XISTANTE / <Q>UITTER")
+
+        if choix == "N":
             print("\n")
             print("**********")
             print("\n")
+            continue
+        if choix == "E":
+            hist_session.lister_historique()
+            ind = int(input("Choisissez une session: "))
+            if (ind >= 0) and (ind < hist_session.taille()):
+                #Nouvelle date de demande de connexion
+                hist_session.ret_session(ind).nvelle_date()
+                sess = hist_session.ret_session(ind)
+                demande_reconnexion()
+            else:
+                print("ERREUR - choix incorrect...")
+                break
+        else:
+            break
 
     print("Au revoir!")
