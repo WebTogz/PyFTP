@@ -100,6 +100,7 @@ if __name__ == '__main__' :
                 "\tH/HELP -> Aide\n" + \
                 "\tS/STATE -> Imprime sur la sortie standard l'état du dossier dans lequel on se trouve\n" + \
                 "\tM/MOVE [dossier] -> Permet de se positionner dans le dossier donné en paramètre\n" + \
+                "\tL/LOOKING [fichier] -> Permet de visualiser un fichier dans la console\n" + \
                 "\tCD/CREATE DIRECTORY [dossier] -> Permet de créer un dossier dans ./\n" + \
                 "\tR/RENAME [fichier_à_renommer] [nouveau_nom] -> Permet de modifier le nom d'un fichier/répertoire (1er paramètre) en un autre (2ème paramètre)\n" + \
                 "\tRM [fichier] -> Permet de supprimer un fichier/dossier donné en paramètre\n" + \
@@ -118,6 +119,14 @@ if __name__ == '__main__' :
                 else:
                     ftp.cwd(ligne[1])
                     hist_rep.append(ligne[1])
+            if (cmd == "L") or (cmd == "LOOKING"):
+                if (len(ligne) == 1):
+                    print("ERREUR - pas de fichier donné en paramètre...")
+                else:
+                    try:
+                        ftp.retrlines('RETR %s' %ligne[1])
+                    except:
+                        print("Visualisation du fichier impossible...")
             if (cmd == "CD") or (cmd == "CREATE DIRECTORY"):
                 print("Pas encore implémenté...")
             if (cmd == "R") or (cmd == "RENAME"):
