@@ -5,13 +5,16 @@ Client FTP - Python 3.4
 
 Utilisation de la librairie ftplib
 
+UTILISATION
+-----------
+
+<code>python3.4 src/main.py</code>
+
 TODO
 ----
 
 - [ ]  Téléchargement récursif
-- [x]  Suppression de répertoires
 - [ ]  FTP-TLS
-- [x]  Permettre le changement du port par défaut
 
 Contact
 -------
