@@ -137,7 +137,7 @@ if __name__ == '__main__' :
                     ftp.rename(ligne[1], ligne[2])
             if (cmd == "RM"):
                 if (len(ligne) == 1):
-                    print("ERREUR - pas de fichier/dossier donné en paramètre")
+                    print("ERREUR - pas de fichier/dossier donné en paramètre...")
                 else:
                     try:
                         ftp.delete(ligne[1])
