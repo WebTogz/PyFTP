@@ -104,7 +104,8 @@ if __name__ == '__main__' :
                 "\tCD/CREATE DIRECTORY [dossier] -> Permet de créer un dossier dans ./\n" + \
                 "\tR/RENAME [fichier_à_renommer] [nouveau_nom] -> Permet de modifier le nom d'un fichier/répertoire (1er paramètre) en un autre (2ème paramètre)\n" + \
                 "\tRM [fichier] -> Permet de supprimer un fichier/dossier donné en paramètre\n" + \
-                "\tDL/DOWNLOAD [fichier] -> Télécharge (récursivement) le fichier lié - ./ par défaut\n" + \
+                "\tDL/DOWNLOAD [fichier] -> Télécharge le fichier NON BINAIRE lié - ./ par défaut dans le cas récursif\n" + \
+                "\tDLB/DOWNLOAD BINARY [binaire] -> Télécharge le BINAIRE lié\n" + \
                 "\tDS/DISPLAY SESSIONS -> Affiche sur la sortie standard la liste des sessions enregistrées\n" + \
                 "\tCS/CONNECT SESSION -> Nouvelle connexion sur une session pré-enregistrée\n"
                 )
@@ -145,7 +146,23 @@ if __name__ == '__main__' :
                     except error_reply as e_reply:
                         print("ERREUR lors de la suppression du fichier/dossier: ", e_reply)
             if (cmd == "DL") or (cmd == "DOWNLOAD"):
-                print("Pas encore implémenté...")
+                if (len(ligne) == 1):
+                    print("Le téléchargement récursif sur ./ n'a pas encore implémenté...")
+                else:
+                    try:
+                        fichier = open(ligne[1], 'wt')
+                        ftp.retrlines('RETR %s' %ligne[1], lambda data: fichier.write(data+'\n'))
+                    except:
+                        print("Téléchargement du fichier impossible...")
+            if (cmd == "DLB") or (cmd == "DOWNLOAD BINARY"):
+                if (len(ligne) == 1):
+                    print("ERREUR - absence du nom du binaire en paramètre")
+                else:
+                    try:
+                        fichier = open(ligne[1], 'wb')
+                        ftp.retrbinary('RETR %s' %ligne[1], fichier.write)
+                    except:
+                        print("Téléchargement du binaire impossible...")
             if (cmd == "DS") or (cmd == "DISPLAY SESSIONS"):
                 hist_session.lister_historique()
             if (cmd == "CS") or (cmd == "CONNECT SESSION"):
