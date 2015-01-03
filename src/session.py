@@ -32,6 +32,12 @@ class session(object):
         """
         return self.ret_date()+" :: Session "+self.serveur+" - initialisée par "+self.login
 
+    def nvelle_date(self):
+        """
+        Fonction permettant de modifier l'attribut date de l'objet
+        """
+        self.date = datetime.now()
+
     def ret_date(self):
         """
         Fonction permettant de retourner la date d'après l'attribut homonyme
